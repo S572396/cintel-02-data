@@ -6,7 +6,13 @@ import palmerpenguins
 penguins_df = palmerpenguins.load_penguins()
 
 # Get the Data
-# go back and ediit/update
+# go back and edit/update
+
+#REQUIREMENTS:
+
+#- the overall page to have a title
+#-a sidebar with input components
+#-the main content will include a data table, data grid, and some charts
 
 ui.page_opts(title="Sandra's Palmer Penguin Data", fillable=True)
 with ui.layout_columns():
