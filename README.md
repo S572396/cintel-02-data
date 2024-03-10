@@ -23,8 +23,6 @@ penguins_df =palmerpenguins.load_penguins()
 # Define User Interface (ui)
 ui.page_opts(title = "Sandra's Practice of Palmer Penguin Data"
 
-
-ui.page_opts(title="Sandra's Palmer Penguin Data", fillable=True)
 with ui.layout_columns():
 
     @render_plotly
