@@ -1,7 +1,10 @@
 import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-import palmerpenguins
+from shiny import reactive, render, req
+from palmerpenguins import load_penguins
+import seaborn as sns
+
 
 # Load palmer penguins data set
 penguins_df = palmerpenguins.load_penguins()
@@ -30,10 +33,6 @@ ui.input_slider("seaborn_bin_count", "Number of Seaborn bins", 0, 100, 20)
 #Use ui.hr() to add a horizontal rule to the sidebar
 ui.hr("Number of Seaborn bins")
 
-# Use ui.a() to add a hyperlink to the sidebar
-ui.a "GitHub",
-     href = "httops:// ("
-
 # Use ui.input_checkbox_group() to create a checkbox group input to filter the species
 ui.input_checkbox_group(
     "selected_species_list",
@@ -42,7 +41,6 @@ ui.input_checkbox_group(
     selected=["Adelie"],
     inline=True
 )
-
 
 with ui.layout_columns():
 
@@ -53,5 +51,51 @@ with ui.layout_columns():
     @render_plotly
     def plot2():
         return px.histogram(px.data.tips(), y="total_bill")
+
+
+# Plotly Histogram
+with ui.layout_columns():
+
+    @render_plotly
+    def plot1():
+        fig = px.histogram(penguins_df, x="flipper_length_mm", color="species", marginal="box")
+        return fig
+
+    @render_plotly
+    def plot2():
+        fig = px.histogram(penguins_df, x="flipper_length_mm", color="species", marginal="box")
+        return fig
+
+# Seaborn Histogram
+with ui.layout_columns():
+
+    @render_plotly
+    def plot3():
+        # Seaborn Histogram
+        sns.set(style="whitegrid")
+        g = sns.histplot(data=penguins_df, x="flipper_length_mm", hue="species", element="step", common_norm=False)
+        return g.figure
+
+    @render_plotly
+    def plot4():
+        # Seaborn Histogram
+        sns.set(style="whitegrid")
+        g = sns.histplot(data=penguins_df, x="flipper_length_mm", hue="species", element="step", common_norm=False)
+        return g.figure
+
+# Scatter plot
+@render_plotly
+def Penguin_Species_Plot():
+    plotly_scatter = px.scatter(
+        penguins_df,
+        x="bill_depth_mm",
+        y="bill_length_mm",
+        color="species",
+        labels={"bill_depth_mm": "X Label", "bill_length_mm": "Y Label"},
+        title="Penguin Species Plot",
+    )
+    return plotly_scatter
+
+
 
 
