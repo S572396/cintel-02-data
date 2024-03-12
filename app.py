@@ -45,6 +45,13 @@ ui.input_checkbox_group(
 with ui.layout_columns():
 
     @render_plotly
+    def plot1_plotly():
+        return px.histogram(penguins_df, x="flipper_length_mm", color="species", marginal="box")
+
+
+with ui.layout_columns():
+
+    @render_plotly
     def plot1():
         return px.histogram(px.data.tips(), y="tip")
 
