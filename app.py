@@ -45,19 +45,20 @@ with ui.sidebar(open="open"):
         selected=["Adelie"],
         inline=True
     )
-
+    
+    
 # Data Grid
 with ui.h2("Data Grid"):
     @render.data_frame
     def penguins_data_grid():
-        return render.DataGrid(penguins_df)
+        return render.DataGrid(penguins_df, height=150,)
 
 # Data Table
 with ui.accordion(id="acc", open="closed"):
     with ui.accordion_panel("Data Table"):
         @render.data_frame
         def penguin_data_table():
-            return render.DataTable(penguins_df)
+            return render.DataTable(penguins_df, height=100)
 
 # Plotly Histogram
 with ui.navset_card_tab(id="tab"):
@@ -108,7 +109,6 @@ with ui.navset_card_tab(id="tab"):
                 }
             )
             return plotly_scatter
-
 
 
 
