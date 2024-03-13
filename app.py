@@ -1,10 +1,11 @@
 import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-from shiny import reactive, render, req
-from palmerpenguins import load_penguins  # Import the palmerpenguins library
-
+from palmerpenguins import load_penguins
+from shiny import render
 import seaborn as sns
+
+import pandas as pd
 
 # Load palmer penguins data set
 penguins_df = load_penguins()  # Use the function directly without specifying the module
@@ -13,7 +14,7 @@ penguins_df = load_penguins()  # Use the function directly without specifying th
 ui.page_opts(title="Sandra's Palmer Penguin Data", fillable=True)
 
 # Create sidebar with open parameter and 2nd level header
-with ui.sidebar(collapsed=False):
+with ui.sidebar(open="open"):
     ui.input_slider("selected_number_of_bins", "Number of Bins", 0, 100, 10)
     ui.h2("Sidebar")
 
@@ -34,7 +35,7 @@ with ui.sidebar(collapsed=False):
     ui.hr("Number of Seaborn bins")
 
     # Use ui.a() to add a hyperlink to the sidebar
-    ui.a("GitHub", href="https://github.com/S572396/cintel-02-data", target="_blank") 
+    ui.a("GitHub", href="https://github.com/S572396/cintel-02-data", target="_blank")
 
     # Use ui.input_checkbox_group() to create a checkbox group input to filter the species
     ui.input_checkbox_group(
@@ -44,6 +45,70 @@ with ui.sidebar(collapsed=False):
         selected=["Adelie"],
         inline=True
     )
+
+# Data Grid
+with ui.h2("Data Grid"):
+    @render.data_frame
+    def penguins_data_grid():
+        return render.DataGrid(penguins_df)
+
+# Data Table
+with ui.accordion(id="acc", open="closed"):
+    with ui.accordion_panel("Data Table"):
+        @render.data_frame
+        def penguin_data_table():
+            return render.DataTable(penguins_df)
+
+# Plotly Histogram
+with ui.navset_card_tab(id="tab"):
+    with ui.nav_panel("Plotly Penguin Histogram"):
+        @render_plotly
+        def plotly_histogram():
+            plotly_hist = px.histogram(
+                data_frame=penguins_df,
+                x=input.selected_attribute(),
+                nbins=input.plotly_bin_count(),
+                color="species"
+            ).update_layout(
+                title="Plotly Penguins Data",
+                xaxis_title="Selected Attribute",
+                yaxis_title="Count"
+            )
+            return plotly_hist
+
+# Seaborn Histogram
+    with ui.nav_panel("Seaborn Histogram"):
+        @render.plot
+        def seaborn_histogram():
+            seaborn_hist = sns.histplot(
+                data=penguins_df,
+                x=input.selected_attribute(),
+                bins=input.seaborn_bin_count(),
+            )
+            seaborn_hist.set_title("Seaborn Penguin Data")
+            seaborn_hist.set_xlabel("Selected Attribute")
+            seaborn_hist.set_ylabel("Count")
+            return seaborn_hist
+
+# Plotly Scatterplot
+    with ui.nav_panel("Plotly Scatterplot"):
+        ui.card_header("Plotly Scatter Plot Species")
+
+        @render_plotly
+        def plotly_scatterplot():
+            plotly_scatter = px.scatter(
+                penguins_df,
+                x="bill_depth_mm",
+                y="bill_length_mm",
+                color="species",
+                size_max=8,
+                labels={
+                    "bill_depth_mm": "Bill Depth(mm)",
+                    "bill_length_mm": "Bill Length(mm)"
+                }
+            )
+            return plotly_scatter
+
 
 
 
